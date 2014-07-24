@@ -1,4 +1,7 @@
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.util.PriorityQueue;
 
 /*
  * The Compressor class will take care of compressing 
@@ -20,15 +23,29 @@ import java.io.File;
  */
 
 public class Compressor {
-	// Variabless
+	// Variables
 	
-	public Compressor(){
-		// Do something here
+	/* Compressor takes in a text file and calculates the frequencies
+	 * of each character in the text */
+	public Compressor(File f) throws Exception{
+		PriorityQueue<HuffmanTree> huffTrees = new PriorityQueue<HuffmanTree>();
 	}
 	
-	public void Compress(File f){
+	
+	public void Compress(File f) throws Exception{
 		try{
-			// Instantiate huffman tree and run algorithm
+			// Calculate the frequency of each character
+			String line = null;
+			char[] charFreqs = new char[256];
+			BufferedReader br = new BufferedReader( new FileReader(f) );
+			
+			// Calculate the frequency of each character
+			while( (line = br.readLine()) != null ){
+				for( char c : line.toCharArray() ){
+					charFreqs[c]++;
+				}
+			}
+			
 		}catch(Exception e){
 			// TODO: Upgrade error handling to print to the text field
 			throw e;

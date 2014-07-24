@@ -33,7 +33,7 @@ public class HuffWindow {
 	 */
 	private void initialize() {
 		frmCompressure = new JFrame();
-		frmCompressure.setTitle("Compressure\n");
+		frmCompressure.setTitle("Compressure");
 		frmCompressure.setBounds(100, 100, 450, 300);
 		frmCompressure.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -86,8 +86,8 @@ public class HuffWindow {
 
 	private class SwingAction extends AbstractAction {
 		public SwingAction() {
-			putValue(NAME, "SwingAction");
-			putValue(SHORT_DESCRIPTION, "Some short description");
+			putValue(NAME, "Choose a file...");
+			putValue(SHORT_DESCRIPTION, "Choose a file...");
 		}
 		public void actionPerformed(ActionEvent e) {
 		}
@@ -110,8 +110,8 @@ public class HuffWindow {
 	}
 	private class SwingAction_3 extends AbstractAction {
 		public SwingAction_3() {
-			putValue(NAME, "SwingAction_3");
-			putValue(SHORT_DESCRIPTION, "Some short description");
+			putValue(NAME, "Encode/Decode");
+			putValue(SHORT_DESCRIPTION, "Encode .txt or decode .huff files.");
 		}
 		public void actionPerformed(ActionEvent e) {
 		}
