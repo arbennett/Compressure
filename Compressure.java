@@ -14,19 +14,7 @@ public class Compressure {
 	public static void main(String [] args){
 		// create the gui
 		System.out.println("Building Compressure...");
-		//HuffWindow theWindow = new HuffWindow();
-		
-		// testing the compression
-		File file;
-		Compressor compress;
-		try {
-			file = new File("test.txt");
-			compress = new Compressor();
-			compress.Compress(file);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
+		HuffWindow theWindow = new HuffWindow();	
 	}
 	
 }

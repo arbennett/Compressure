@@ -28,12 +28,21 @@ public class Compressor {
 	
 	/* Compressor takes in a text file and calculates the frequencies
 	 * of each character in the text */
-	public Compressor() throws Exception{
+	public Compressor(){
 		huffTrees = new PriorityQueue<HuffmanTree<Character>>();
 	}
 	
-	
-	public void Compress(File f) throws Exception{
+	/*
+	 * The main compression routine.  Takes in a file, reads it in line
+	 * by line, counting the frequency of each character.  Using the
+	 * frequency data construct huffman trees, and assemble those into 
+	 * the master huffman tree, which is then polled from the priority
+	 * queue until empty.  For more information about the code assembly
+	 * see the writeCodes method below.
+	 * 
+	 * @param f: The file to compress.
+	 */
+	public String Compress(File f) throws Exception{
 		try{
 			// Calculate the frequency of each character
 			String line = null;
@@ -55,6 +64,7 @@ public class Compressor {
 			}
 			
 			// Build the master tree
+			StringBuilder encodeInfo = new StringBuilder();
 			while( huffTrees.size() > 1 ){
 				HuffmanTree<Character> one = huffTrees.poll();
 				HuffmanTree<Character> two = huffTrees.poll();
@@ -63,7 +73,7 @@ public class Compressor {
 			}
 			
 			StringBuilder code = new StringBuilder();
-			writeCodes(huffTrees.poll(), code);
+			return encodeInfo.append(writeCodes(huffTrees.poll(), code)).toString();
 			
 		}catch(Exception e){
 			// TODO: Upgrade error handling to print to the text field
@@ -71,7 +81,17 @@ public class Compressor {
 		}
 	}
 	
-	private void writeCodes(HuffmanTree<Character> huffTree, StringBuilder code ){
+	/*
+	 * Generates the codes of the huffman encoding.  A recursive function to
+	 * traverse the tree and assemble each code.  Works by traversing left
+	 * as far as possible and adding zero, then right as far as possible and 
+	 * adding one to the code.  Once at a leaf node this is our code.
+	 * 
+	 * @param huffTree: The fully assembled huffman tree
+	 * @param code: Stringbuilder to put the code together
+	 * 				as we traverse the tree.
+	 */
+	private String writeCodes(HuffmanTree<Character> huffTree, StringBuilder code ){
 		// Check if we are not at a leaf node
 		if( huffTree.symbol == null ){
 			// Add a 0 for going down the left path
@@ -82,9 +102,11 @@ public class Compressor {
 			code.append('1');
 			writeCodes(huffTree.right, code);
 			code.deleteCharAt(code.length()-1);
+			return "";
 		// We are at a leaf and have a constructed code for this symbol
 		}else{
-			System.out.println(huffTree.symbol + "\t" + huffTree.frequency + "\t" + code.toString());
+			//TODO: Make this write out the compressed file.
+			return huffTree.symbol + "\t" + huffTree.frequency + "\t" + code.toString();
 		}
 	}
 }

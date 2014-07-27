@@ -21,6 +21,14 @@ public class HuffmanTree<Symbol> implements Comparable<HuffmanTree> {
 	public final Symbol symbol;
 	public final HuffmanTree<Symbol> left, right;
 	
+	/*
+	 * Constructor for a node of the huffman tree.  Initializes
+	 * the left and right subtrees as null.
+	 * 
+	 * @param sym: The data we are trying to (de)compress
+	 * @param freq: The number of times the data occurs
+	 * 
+	 */
 	public HuffmanTree(Symbol sym, int freq){
 		this.left = null;
 		this.right = null;
@@ -28,6 +36,13 @@ public class HuffmanTree<Symbol> implements Comparable<HuffmanTree> {
 		this.symbol = sym;
 	}
 	
+	/*
+	 * Constructor for non-leaf nodes.  Leaves the symbol null and
+	 * updates the frequency based off of the inputs.
+	 * 
+	 * @param left: the left huffman subtree
+	 * @param right: the right huffman subtree
+	 */
 	public HuffmanTree(HuffmanTree<Symbol> left, HuffmanTree<Symbol> right){
 		this.left = left;
 		this.right = right;
@@ -35,10 +50,19 @@ public class HuffmanTree<Symbol> implements Comparable<HuffmanTree> {
 		this.symbol = null;
 	}
 
+	/*
+	 * Simple comparison of the frequencies of a given root node.
+	 * 
+	 * @param tree: the huffman tree to compare nodes to
+	 */
 	public int compareTo(HuffmanTree tree) {
 		return this.frequency - tree.frequency;
 	}
 	
+	/*
+	 * Print some useful information about the huffman tree.
+	 * Mostly used for debugging purposes.
+	 */
 	public String toString(){
 		return "Frequency:\t" + this.frequency + "\nSymbol:\t" + this.symbol;
 	}

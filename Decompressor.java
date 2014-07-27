@@ -18,7 +18,7 @@ public class Decompressor {
 	
 	public void Decompress(File f){
 		try{
-			
+			System.out.println("This is a placeholder.");
 		}catch(Exception e){
 			throw e;
 		}
