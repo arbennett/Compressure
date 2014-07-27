@@ -16,64 +16,33 @@
  * 
  * TODO: Should symbol just be an interpreted int or should it be left as a char?
  */
-public class HuffmanTree {
+public class HuffmanTree<Symbol> implements Comparable<HuffmanTree> {
+	public final int frequency;
+	public final Symbol symbol;
+	public final HuffmanTree<Symbol> left, right;
 	
-	HuffmanNode root, left, right, parent;
-	
-	public HuffmanTree(){
-		root = new HuffmanNode();
+	public HuffmanTree(Symbol sym, int freq){
+		this.left = null;
+		this.right = null;
+		this.frequency = freq;
+		this.symbol = sym;
 	}
 	
-	/*
-	 * The HuffmanNode class is what Huffman 
-	 * Trees are made out of.
-	 */
-	private static class HuffmanNode implements Comparable<HuffmanNode>{
-		char symbol;
-		int frequency;
-		HuffmanNode left, right, parent;
-		
-		/*
-		 * Null constructor 
-		 */
-		private HuffmanNode(){}
-		
-		/*
-		 *  Constructor to build leaf nodes in tree
-		 *  @param symbol - the character from the text being compressed
-		 *  @param frequency - the number of times the symbol occurred in the text
-		 */
-		private HuffmanNode(char symbol, int frequency){
-			this.symbol = symbol;
-			this.frequency = frequency;
-		}
-		
-		/*
-		 *  Construct a non-leaf node.  This constructor automatically
-		 *  orders nodes so that left.frequency > right.frequency.
-		 *  
-		 *  @param left - the left node
-		 *  @param right - the right node
-		 */
-		private HuffmanNode(HuffmanNode left, HuffmanNode right){
-			if (left.compareTo(right) > 0){
-				this.left = left;
-				this.right = right;
-				this.frequency = left.frequency + right.frequency;
-			}else{
-				this.right = left;
-				this.left = right;
-				this.frequency = left.frequency + right.frequency;
-			}
-		}
+	public HuffmanTree(HuffmanTree<Symbol> left, HuffmanTree<Symbol> right){
+		this.left = left;
+		this.right = right;
+		this.frequency = left.frequency + right.frequency;
+		this.symbol = null;
+	}
 
-		// Return the difference between frequencies
-		// Will use the sign of this to determine where 
-		// to put nodes in the tree.
-		public int compareTo(HuffmanNode node) {
-			return this.frequency - node.frequency;
-		}
-		
+	public int compareTo(HuffmanTree tree) {
+		return this.frequency - tree.frequency;
 	}
+	
+	public String toString(){
+		return "Frequency:\t" + this.frequency + "\nSymbol:\t" + this.symbol;
+	}
+
+
 
 }

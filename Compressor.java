@@ -24,11 +24,12 @@ import java.util.PriorityQueue;
 
 public class Compressor {
 	// Variables
+	PriorityQueue<HuffmanTree<Character>> huffTrees;
 	
 	/* Compressor takes in a text file and calculates the frequencies
 	 * of each character in the text */
-	public Compressor(File f) throws Exception{
-		PriorityQueue<HuffmanTree> huffTrees = new PriorityQueue<HuffmanTree>();
+	public Compressor() throws Exception{
+		huffTrees = new PriorityQueue<HuffmanTree<Character>>();
 	}
 	
 	
@@ -36,9 +37,9 @@ public class Compressor {
 		try{
 			// Calculate the frequency of each character
 			String line = null;
-			char[] charFreqs = new char[256];
+			int[] charFreqs = new int[256];
 			BufferedReader br = new BufferedReader( new FileReader(f) );
-			
+	
 			// Calculate the frequency of each character
 			while( (line = br.readLine()) != null ){
 				for( char c : line.toCharArray() ){
@@ -46,9 +47,44 @@ public class Compressor {
 				}
 			}
 			
+			// Now put it into the huffman tree
+			for(int i = charFreqs.length-1; i > -1; --i){
+				if(charFreqs[i] > 0){
+					huffTrees.offer(new HuffmanTree<Character>((char) i, charFreqs[i]));
+				}
+			}
+			
+			// Build the master tree
+			while( huffTrees.size() > 1 ){
+				HuffmanTree<Character> one = huffTrees.poll();
+				HuffmanTree<Character> two = huffTrees.poll();
+				HuffmanTree<Character> combine = new HuffmanTree<Character>(one, two);
+				huffTrees.offer(combine);
+			}
+			
+			StringBuilder code = new StringBuilder();
+			writeCodes(huffTrees.poll(), code);
+			
 		}catch(Exception e){
 			// TODO: Upgrade error handling to print to the text field
 			throw e;
+		}
+	}
+	
+	private void writeCodes(HuffmanTree<Character> huffTree, StringBuilder code ){
+		// Check if we are not at a leaf node
+		if( huffTree.symbol == null ){
+			// Add a 0 for going down the left path
+			code.append('0');
+			writeCodes(huffTree.left, code);
+			code.deleteCharAt(code.length()-1);
+			// Add a 1 for going down the right path
+			code.append('1');
+			writeCodes(huffTree.right, code);
+			code.deleteCharAt(code.length()-1);
+		// We are at a leaf and have a constructed code for this symbol
+		}else{
+			System.out.println(huffTree.symbol + "\t" + huffTree.frequency + "\t" + code.toString());
 		}
 	}
 }
