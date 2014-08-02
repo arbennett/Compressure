@@ -1,4 +1,4 @@
-import java.io.File;
+import java.math.BigInteger;
 
 /*
  * Compressure is a simple application to do some 
@@ -14,7 +14,7 @@ public class Compressure {
 	public static void main(String [] args){
 		// create the gui
 		System.out.println("Building Compressure...");
-		HuffWindow theWindow = new HuffWindow();	
+		HuffWindow theWindow = new HuffWindow();
 	}
 	
 }
