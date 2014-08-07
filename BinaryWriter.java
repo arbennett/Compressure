@@ -24,6 +24,7 @@ public class BinaryWriter {
 	 * out a byte if we have written 8 bits. */
 	public void write(int bit){
 		try{
+			System.out.print(bit);
 			if( (bit != 0 && bit != 1)){
 			   throw new IllegalArgumentException();
 			}
@@ -40,7 +41,17 @@ public class BinaryWriter {
 	
 	public void writeByte(byte b){
 		try{
-			output.write(b);
+			//System.out.println();
+			for(int i=0 ; i<8 ; i++){
+				if( (b & (1 << i)) > 0){
+					//System.out.print(0);
+					write(0);
+				}else{
+					//System.out.print(1);
+					write(1);
+				}
+			}
+			//System.out.println();
 		}catch(Exception e){
 			e.printStackTrace();
 		}

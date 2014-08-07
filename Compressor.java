@@ -30,46 +30,33 @@ import java.util.PriorityQueue;
  */
 
 public class Compressor {
-	// Variables
-	private File infile, outfile;
-	private HashMap<Character,String> codeMap;
-	private StringBuilder code;
-	private boolean isCompressed;
-	private Integer characterCount, symbolCount;
 	
 	
-	/**
-	 * 
-	 */
-	public Compressor(){
-		// Instantiate some variables
-		codeMap = new HashMap<Character, String>();
-		code = new StringBuilder();
-		isCompressed = false;
-		characterCount = 0;
-		symbolCount = 0;
-	}
+	/** Blank constructor */
+	public Compressor(){}
 	
 	
 	/**
 	 * 
 	 * @param f
 	 */
-	public void Compress(File f){
+	public String Compress(File f){
+		String info;
 		try{
 			// Instantiate huffman tree and run algorithm
-			infile = f;
+			File infile = f;
 			String outFileName = infile.getPath().substring(0, infile.getPath().length() - 4) + ".huff";
-			outfile = new File(outFileName);
-			int[] charFreqs = countFrequency();
+			File outfile = new File(outFileName);
+			int[] charFreqs = countFrequency(infile);
 			HuffmanTree<Character> huffTree = buildTree(charFreqs);
-			buildMap(huffTree, new StringBuilder());
-			writeFile(huffTree);
-			isCompressed = true;
+			HashMap<Character,String> codeMap = buildMap(new HashMap<Character,String>(), huffTree, new StringBuilder());
+			writeFile(huffTree,codeMap, outfile, infile);
+			info = printInfo(infile, outfile, codeMap);
 		}catch(Exception e){
 			// TODO: Upgrade error handling to print to the text field
 			throw e;
 		}
+		return info;
 	}
 	
 	
@@ -80,14 +67,13 @@ public class Compressor {
 	 * @param inFile : the file we are trying to compress
 	 * @return charFreqs : the frequency of each character in the extended ascii alphabet
 	 */
-	private int[] countFrequency(){
+	private int[] countFrequency(File infile){
 		int[] charFreqs = new int[256];
 		try{
 			BufferedReader reader = new BufferedReader(new FileReader(infile));
 			String line;
 			while( (line = reader.readLine()) != null ){
 				for(char c : line.toCharArray()){
-					characterCount++;
 					if((int)c<257){
 						charFreqs[c]++; // For now we will just count ascii characters.
 					}else{
@@ -115,7 +101,6 @@ public class Compressor {
 		// Put all of our trees into the queue
 		for(int i = 0; i < charFreqs.length; i++){
 			if(charFreqs[i] > 0){
-				symbolCount++;
 				tempTree = new HuffmanTree<Character>((char) i , charFreqs[i]);
 				huffQueue.offer(tempTree);
 			}
@@ -137,34 +122,40 @@ public class Compressor {
 	 * @param huffTree
 	 * @return codeMap
 	 */
-	private void buildMap(HuffmanTree<Character> huffTree, StringBuilder code){
+	private HashMap<Character, String> buildMap(HashMap<Character,String> codeMap, HuffmanTree<Character> huffTree, StringBuilder code){
 		if (huffTree.symbol != null){
 			// Put the <Symbol,Code> pair in the map
 			codeMap.put(huffTree.symbol,code.toString());
 		} else {
 			// Traverse left
 			code.append(0);
-			buildMap(huffTree.left, code);
+			codeMap = buildMap(codeMap, huffTree.left, code);
 			code.deleteCharAt(code.length()-1);
 			
 			// Traverse right
 			code.append(1);
-			buildMap(huffTree.right, code);
+			codeMap = buildMap(codeMap, huffTree.right, code);
 			code.deleteCharAt(code.length()-1);
 		}
+		
+		return codeMap;
 	}
 	
-	
+	/**
+	 * 
+	 * @param output
+	 * @param huffTree
+	 */
 	private void writeHeader(BinaryWriter output, HuffmanTree<Character> huffTree){
 		if(huffTree.symbol == null){
 			output.write(0);
-			System.out.print(0);
+			//System.out.print(0);
 			if(huffTree.left != null)  writeHeader(output,huffTree.left);
 			if(huffTree.right != null) writeHeader(output,huffTree.right);
 		}else{
 			output.write(1);
-			System.out.print(1);
-			System.out.print(huffTree.symbol.charValue());
+			//System.out.print(1);
+			//System.out.print(huffTree.symbol.charValue());
 			Integer symbol = (int) huffTree.symbol.charValue();
 			output.writeByte( symbol.byteValue() );
 		}
@@ -174,15 +165,18 @@ public class Compressor {
 	 * Writes the compressed file in binary form.
 	 * @param codeMap
 	 */
-	private void writeFile(HuffmanTree<Character> huffTree){
+	private void writeFile(HuffmanTree<Character> huffTree, HashMap<Character,String> codeMap, File outfile, File infile){
 		// TODO: Write file writer to write out a binary file & a header file.  Need to implement BinaryWriter before this can be done though.
 		// First write out a header so we can decode later
+		Integer eof = 256;
 		try{
 			FileWriter decode = new FileWriter(outfile);
 			BinaryWriter output = new BinaryWriter ( new FileOutputStream(outfile, true) );
 			
 			// Write out the header
 			writeHeader(output, huffTree);
+			output.write(1); // Add a signal for the end of the header
+			output.writeByte(eof.byteValue());
 			
 			// Write out the binary 
 		    BufferedReader reader = new BufferedReader(new FileReader(infile));
@@ -191,14 +185,13 @@ public class Compressor {
 				for(char codeChar : line.toCharArray()){
 					// Get the code for each character
 					code = codeMap.get(codeChar);
-					System.out.println(codeChar + " " + code);
+					//System.out.println(codeChar + " " + code);
 					for( char bit : code.toCharArray() ){
 						output.write((int) (bit - 48)); //Scaled for ascii
 					}
 				}
 			}
 			reader.close();
-
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -209,19 +202,14 @@ public class Compressor {
 	 * Returns a string with some information about the compression that has been done.
 	 * @return
 	 */
-	public String printInfo(){
-		if( isCompressed = false){
-			return "You have not yet compressed the file!  How did this happen!?";
-		}else{
-			StringBuilder info = new StringBuilder();
-			info.append("Input file size:\t" + infile.length() + "\nOutput file size:\t" + outfile.length() + "\nCompression ratio:\t" + (double) (outfile.length())/infile.length() + "\n\n"); 
-			Iterator<Entry<Character, String>> it = codeMap.entrySet().iterator();
-		    while (it.hasNext()) {
-		        Map.Entry<Character, String> pairs = (Map.Entry<Character, String>)it.next();
-		        info.append("  " + pairs.getKey() + "\t" + pairs.getValue() + "\n");
-		    }
-		    return info.toString();
+	public String printInfo(File infile, File outfile, HashMap<Character,String> codeMap){
+		StringBuilder info = new StringBuilder();
+		info.append("Input file size:\t" + infile.length() + "\nOutput file size:\t" + outfile.length() + "\nCompression ratio:\t" + (double) (outfile.length())/infile.length() + "\n\n"); 
+		Iterator<Entry<Character, String>> it = codeMap.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<Character, String> pairs = (Map.Entry<Character, String>)it.next();
+			info.append("  " + pairs.getKey() + "\t" + pairs.getValue() + "\n");
 		}
+		return info.toString();
 	}
-
 }

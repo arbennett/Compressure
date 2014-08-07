@@ -38,10 +38,17 @@ public class BinaryReader {
 	
 	public int readByte(){
 		int result = 0;
+		int b;
 		try{
+			//System.out.println("--------");
 			for(int i=7 ; i>=0 ; i--){
-				result+=read()*Math.pow(2, i);
+				b = read();
+				System.out.print(b);
+				result+=b*Math.pow(2, i);
 			}
+			//System.out.println();
+			//System.out.println("--------");
+			//System.out.println("Result: " + result);
 		}catch(Exception e){
 			e.printStackTrace();
 		}

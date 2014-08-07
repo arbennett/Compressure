@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 
 /*
@@ -14,36 +15,41 @@ import java.io.InputStream;
  */
 public class Decompressor {
 	
-	public Decompressor(){
-		
-	}
+	public Decompressor(){}
 	
 	public void Decompress(File f){
 		try{
-			
+			BinaryReader bitreader = new BinaryReader( new FileInputStream(f) );
+			HuffmanTree<Character> huffTree = buildTree(bitreader);
 		}catch(Exception e){
-			throw e;
+			e.printStackTrace();
 		}
 	}
 	
 	private HuffmanTree<Character> buildTree(BinaryReader bitreader){
 		try{
+			//System.out.println();
 			Boolean eof = false;
-			int bit;
-			while(!eof){
+			int bit = 0;
+			int symbol;
+			//bitreader.readByte();
+			while(bit != -1){
 				bit = bitreader.read();
+				System.out.print(bit);
 				if(bit == 1){
 					//Found a leaf node
-					return new HuffmanTree<Character>((char) bitreader.readByte(), 0);
+					symbol = bitreader.readByte();
+					if(symbol > 0){
+						//System.out.println((char) symbol);
+						return new HuffmanTree<Character>((char) symbol, 0);
+					}else{
+						return null;
+					}
 				}else if (bit == 0 ){
 					// Look further down the header
 					HuffmanTree<Character> leftTree = buildTree(bitreader);
 					HuffmanTree<Character> rightTree = buildTree(bitreader);
 					return new HuffmanTree<Character>(leftTree,rightTree);
-				}else if (bit == -1){
-					
-				}else{
-					
 				}
 			}
 		}catch(Exception e){

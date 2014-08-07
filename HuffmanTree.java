@@ -17,7 +17,6 @@
  */
 public class HuffmanTree<Symbol> implements Comparable<HuffmanTree<Symbol>>{
 	
-
 	final Symbol symbol;
 	final Integer frequency;
 	final HuffmanTree<Symbol> left, right;
@@ -53,6 +52,9 @@ public class HuffmanTree<Symbol> implements Comparable<HuffmanTree<Symbol>>{
 		return this.frequency - tree.frequency;
 	}
 	
+	/**
+	 * Prints the symbol and frequency for the root node.
+	 */
 	public String toString(){
 		return "Symbol: " + this.symbol + "\t Frequency: " + this.frequency;
 	}

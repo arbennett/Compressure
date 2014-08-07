@@ -154,8 +154,8 @@ public class HuffWindow {
 			putValue(SHORT_DESCRIPTION, "Write .huff and .comp files");
 		}
 		public void actionPerformed(ActionEvent e) {
-			huffCompress.Compress(chosenFile);
-			txtpnWelcomeToCompressure.setText(huffCompress.printInfo());
+			String info = huffCompress.Compress(chosenFile);
+			txtpnWelcomeToCompressure.setText(info);
 		}
 	}
 	
@@ -169,7 +169,7 @@ public class HuffWindow {
 			putValue(SHORT_DESCRIPTION, "Write a .txt file from .huff and .comp files.");
 		}
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Decompress a file.");
+			huffDecompress.Decompress(chosenFile);
 		}
 	}	
 }
