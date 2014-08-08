@@ -155,9 +155,11 @@ public class Compressor {
 		}else{
 			output.write(1);
 			//System.out.print(1);
-			//System.out.print(huffTree.symbol.charValue());
 			Integer symbol = (int) huffTree.symbol.charValue();
-			output.writeByte( symbol.byteValue() );
+			//System.out.println();
+			//System.out.println(huffTree.symbol + " : " + symbol + " : " + Integer.toBinaryString(symbol));
+			//System.out.println();
+			output.writeByte( Integer.toBinaryString(symbol) );
 		}
 	}
 	
@@ -168,7 +170,7 @@ public class Compressor {
 	private void writeFile(HuffmanTree<Character> huffTree, HashMap<Character,String> codeMap, File outfile, File infile){
 		// TODO: Write file writer to write out a binary file & a header file.  Need to implement BinaryWriter before this can be done though.
 		// First write out a header so we can decode later
-		Integer eof = 256;
+		Integer eof = 0;
 		try{
 			FileWriter decode = new FileWriter(outfile);
 			BinaryWriter output = new BinaryWriter ( new FileOutputStream(outfile, true) );
@@ -176,7 +178,7 @@ public class Compressor {
 			// Write out the header
 			writeHeader(output, huffTree);
 			output.write(1); // Add a signal for the end of the header
-			output.writeByte(eof.byteValue());
+			output.writeByte("0");
 			
 			// Write out the binary 
 		    BufferedReader reader = new BufferedReader(new FileReader(infile));
@@ -192,6 +194,7 @@ public class Compressor {
 				}
 			}
 			reader.close();
+			output.close();
 		}catch(Exception e){
 			e.printStackTrace();
 		}

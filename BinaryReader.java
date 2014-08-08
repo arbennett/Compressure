@@ -10,6 +10,11 @@ public class BinaryReader {
 	private InputStream input;
 	private int currentBit, theByte;
 	
+	
+	/**
+	 * 
+	 * @param in
+	 */
 	public BinaryReader(InputStream in){
 		try{
 			input = in;
@@ -20,6 +25,11 @@ public class BinaryReader {
 		}
 	}
 	
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public int read(){
 		try{
 			if(currentBit == 8){
@@ -36,19 +46,21 @@ public class BinaryReader {
 		return (theByte >>> (8-currentBit)) & 1;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public int readByte(){
 		int result = 0;
 		int b;
 		try{
-			//System.out.println("--------");
 			for(int i=7 ; i>=0 ; i--){
 				b = read();
-				System.out.print(b);
+				if(b == -1){
+					break;
+				}
 				result+=b*Math.pow(2, i);
 			}
-			//System.out.println();
-			//System.out.println("--------");
-			//System.out.println("Result: " + result);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
