@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,28 +29,25 @@ public class Decompressor {
 	 * 
 	 * @param f
 	 */
-	public void Decompress(File f){
+	public String Decompress(File f){
+		String info = "Error decompressing your file.  I must stop, sorry...";
 		try{
-			BinaryReader bitreader = new BinaryReader( new FileInputStream(f) );
-			for(int i=0; i<8; i++) 
-				bitreader.read();
-			
+			File infile = f;
+			String outFileName = infile.getPath().substring(0, infile.getPath().length() - 5) + "_decompressed.txt";
+			File outfile = new File(outFileName);
+			BinaryReader bitreader = new BinaryReader( new FileInputStream(infile) );
+			bitreader.readByte();
 			HuffmanTree<Character> huffTree = buildTree(bitreader);
 			HashMap<String,Character> codeMap = buildMap(new HashMap<String,Character>(), huffTree, new StringBuilder());
-			System.out.println();
-			System.out.println(printInfo(codeMap));
-			
-			for(int i=0; i<9; i++) 
-				bitreader.read();
-			
-			String decoded = decode(bitreader, codeMap, new StringBuilder());
-			
-			System.out.println();
-			System.out.println(decoded);
-
+			int textLength = bitreader.readByte();
+			bitreader.readByte(); bitreader.read();
+			String decoded = decode(bitreader, codeMap, textLength, new StringBuilder());
+			writeFile(outfile, decoded);
+			info = "Your file has been written to " + outFileName + ".";
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+		return info;
 	}
 	
 	
@@ -65,13 +63,10 @@ public class Decompressor {
 			int symbol;
 			do{
 				bit = bitreader.read();
-				System.out.print(bit);
 				if(bit == 1){
 					//Found a leaf node
 					symbol = bitreader.readByte();
 					if(symbol > 0){
-						System.out.println();
-						System.out.println(symbol);
 						return new HuffmanTree<Character>((char) symbol, 0);
 					}else{
 						eof = true;
@@ -100,8 +95,6 @@ public class Decompressor {
 	private HashMap<String,Character> buildMap(HashMap<String,Character> codeMap, HuffmanTree<Character> huffTree, StringBuilder code){
 		if (huffTree.symbol != null){
 			// Put the <Symbol,Code> pair in the map
-			//System.out.println(huffTree.symbol);
-			//System.out.println(code.toString());
 			codeMap.put(code.toString(),huffTree.symbol);
 		} else {
 			// Traverse left
@@ -126,21 +119,33 @@ public class Decompressor {
 	 * @param stringBuilder
 	 * @return
 	 */
-	private String decode(BinaryReader bitreader,HashMap<String, Character> codeMap, StringBuilder decoded) {
+	private String decode(BinaryReader bitreader,HashMap<String, Character> codeMap, int textLength, StringBuilder decoded) {
 		StringBuilder code = new StringBuilder();
+		int charsLeft = textLength;
 		int bit = bitreader.read();
 		do{
 			code.append(bit);
 			if (codeMap.containsKey(code.toString())){
 				decoded.append(codeMap.get(code.toString()));
 				code.setLength(0);
+				charsLeft--;
 			}
 			bit = bitreader.read();
-		}while(bit!=-1);
+		}while(bit!=-1 && charsLeft != 0);
 		// TODO Auto-generated method stub
 		return decoded.toString();
 	}
 	
+	private void writeFile(File outfile, String decoded){
+		try{
+			FileWriter fw = new FileWriter(outfile);
+			fw.write(decoded);
+			fw.flush();
+			fw.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 	
 	/**
 	 * Returns a string with some information about the compression that has been done.
@@ -148,7 +153,6 @@ public class Decompressor {
 	 */
 	public String printInfo(HashMap<String,Character> codeMap){
 		StringBuilder info = new StringBuilder();
-		//info.append("Input file size:\t" + infile.length() + "\nOutput file size:\t" + outfile.length() + "\nCompression ratio:\t" + (double) (outfile.length())/infile.length() + "\n\n"); 
 		Iterator<Entry<String,Character>> it = codeMap.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry<String,Character> pairs = (Map.Entry<String,Character>)it.next();

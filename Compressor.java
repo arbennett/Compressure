@@ -50,7 +50,7 @@ public class Compressor {
 			int[] charFreqs = countFrequency(infile);
 			HuffmanTree<Character> huffTree = buildTree(charFreqs);
 			HashMap<Character,String> codeMap = buildMap(new HashMap<Character,String>(), huffTree, new StringBuilder());
-			writeFile(huffTree,codeMap, outfile, infile);
+			writeFile(huffTree,codeMap, charFreqs[256], outfile, infile);
 			info = printInfo(infile, outfile, codeMap);
 		}catch(Exception e){
 			// TODO: Upgrade error handling to print to the text field
@@ -68,7 +68,7 @@ public class Compressor {
 	 * @return charFreqs : the frequency of each character in the extended ascii alphabet
 	 */
 	private int[] countFrequency(File infile){
-		int[] charFreqs = new int[256];
+		int[] charFreqs = new int[257];
 		try{
 			BufferedReader reader = new BufferedReader(new FileReader(infile));
 			String line;
@@ -76,6 +76,7 @@ public class Compressor {
 				for(char c : line.toCharArray()){
 					if((int)c<257){
 						charFreqs[c]++; // For now we will just count ascii characters.
+						charFreqs[256]++;
 					}else{
 						throw new IllegalArgumentException("Illegal character: " + c);
 					}
@@ -99,7 +100,7 @@ public class Compressor {
 		PriorityQueue<HuffmanTree<Character>> huffQueue = new PriorityQueue<HuffmanTree<Character>>();
 		HuffmanTree<Character> tempTree, leftTree, rightTree;
 		// Put all of our trees into the queue
-		for(int i = 0; i < charFreqs.length; i++){
+		for(int i = 0; i < charFreqs.length -1 ; i++){
 			if(charFreqs[i] > 0){
 				tempTree = new HuffmanTree<Character>((char) i , charFreqs[i]);
 				huffQueue.offer(tempTree);
@@ -149,16 +150,11 @@ public class Compressor {
 	private void writeHeader(BinaryWriter output, HuffmanTree<Character> huffTree){
 		if(huffTree.symbol == null){
 			output.write(0);
-			//System.out.print(0);
 			if(huffTree.left != null)  writeHeader(output,huffTree.left);
 			if(huffTree.right != null) writeHeader(output,huffTree.right);
 		}else{
 			output.write(1);
-			//System.out.print(1);
 			Integer symbol = (int) huffTree.symbol.charValue();
-			//System.out.println();
-			//System.out.println(huffTree.symbol + " : " + symbol + " : " + Integer.toBinaryString(symbol));
-			//System.out.println();
 			output.writeByte( Integer.toBinaryString(symbol) );
 		}
 	}
@@ -167,7 +163,7 @@ public class Compressor {
 	 * Writes the compressed file in binary form.
 	 * @param codeMap
 	 */
-	private void writeFile(HuffmanTree<Character> huffTree, HashMap<Character,String> codeMap, File outfile, File infile){
+	private void writeFile(HuffmanTree<Character> huffTree, HashMap<Character,String> codeMap, int textLength, File outfile, File infile){
 		// TODO: Write file writer to write out a binary file & a header file.  Need to implement BinaryWriter before this can be done though.
 		// First write out a header so we can decode later
 		Integer eof = 0;
@@ -177,6 +173,7 @@ public class Compressor {
 			
 			// Write out the header
 			writeHeader(output, huffTree);
+			output.writeByte(Integer.toBinaryString(textLength));
 			output.write(1); // Add a signal for the end of the header
 			output.writeByte("0");
 			

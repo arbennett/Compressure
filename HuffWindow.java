@@ -169,7 +169,8 @@ public class HuffWindow {
 			putValue(SHORT_DESCRIPTION, "Write a .txt file from .huff and .comp files.");
 		}
 		public void actionPerformed(ActionEvent e) {
-			huffDecompress.Decompress(chosenFile);
+			String info = huffDecompress.Decompress(chosenFile);
+			txtpnWelcomeToCompressure.setText(info);
 		}
 	}	
 }
