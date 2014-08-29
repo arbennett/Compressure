@@ -10,6 +10,11 @@ public class BinaryWriter {
 	private OutputStream output;
 	private int currentBit, theByte;
 	
+	
+	/**
+	 * Constructor takes in an output stream for consistency across the reader
+	 * @param out
+	 */
 	public BinaryWriter(OutputStream out){
 		try{
 			output = out;
@@ -39,9 +44,14 @@ public class BinaryWriter {
 		}
 	}
 	
+	/* Write a full byte from the input.   */
 	public void writeByte(String b){
 		try{
 			char[] bits = b.toCharArray();
+			// Workaround, but make sure we don't have too much to write
+			if (bits.length > 8){
+				throw new IndexOutOfBoundsException();
+			}
 			for( int i=0; i<8-bits.length; i++){
 				write(0);
 			}

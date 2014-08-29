@@ -37,7 +37,7 @@ public class Compressor {
 	
 	
 	/**
-	 * 
+	 * Compress a file
 	 * @param f
 	 */
 	public String Compress(File f){
@@ -143,7 +143,8 @@ public class Compressor {
 	}
 	
 	/**
-	 * 
+	 * Write out the header piece of the compressed file that 
+	 * allows us to decode the file once it is read back in
 	 * @param output
 	 * @param huffTree
 	 */

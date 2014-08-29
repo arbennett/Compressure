@@ -26,7 +26,7 @@ public class Decompressor {
 	
 	
 	/**
-	 * 
+	 * Decompress a file
 	 * @param f
 	 */
 	public String Decompress(File f){
@@ -52,7 +52,7 @@ public class Decompressor {
 	
 	
 	/**
-	 * 
+	 * Build the huffman tree from the header portion of the compressed file
 	 * @param bitreader
 	 * @return
 	 */
@@ -86,7 +86,7 @@ public class Decompressor {
 	
 	
 	/**
-	 * 
+	 * Build the map of characters and codes from the huffman tree
 	 * @param codeMap
 	 * @param huffTree
 	 * @param code
@@ -113,7 +113,7 @@ public class Decompressor {
 	
 	
 	/**
-	 * 
+	 * Go through the data portion of the compresed file and use the codeMap to decode it 
 	 * @param bitreader
 	 * @param codeMap
 	 * @param stringBuilder
@@ -136,6 +136,11 @@ public class Decompressor {
 		return decoded.toString();
 	}
 	
+	/**
+	 * Write out the decoded file
+	 * @param outfile
+	 * @param decoded
+	 */
 	private void writeFile(File outfile, String decoded){
 		try{
 			FileWriter fw = new FileWriter(outfile);

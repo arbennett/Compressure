@@ -13,7 +13,6 @@ public class Compressure {
 
 	public static void main(String [] args){
 		// create the gui
-		System.out.println("Building Compressure...");
 		HuffWindow theWindow = new HuffWindow();
 	}
 	

@@ -12,7 +12,7 @@ public class BinaryReader {
 	
 	
 	/**
-	 * 
+	 * Constructor takes an input stream and sets up some data
 	 * @param in
 	 */
 	public BinaryReader(InputStream in){
@@ -27,11 +27,12 @@ public class BinaryReader {
 	
 	
 	/**
-	 * 
+	 * Reads a bit
 	 * @return
 	 */
 	public int read(){
 		try{
+			/* If we need to go to a new byte */
 			if(currentBit == 8){
 				theByte = input.read();
 				if(theByte == -1){
@@ -39,15 +40,17 @@ public class BinaryReader {
 				}
 				currentBit = 0;
 			}
+			/* Record the bit that we are at */
 			currentBit++;
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+		/* Shift bits to get the current ones */
 		return (theByte >>> (8-currentBit)) & 1;
 	}
 	
 	/**
-	 * 
+	 * Read a full byte from the current spot
 	 * @return
 	 */
 	public int readByte(){
@@ -59,6 +62,7 @@ public class BinaryReader {
 				if(b == -1){
 					break;
 				}
+				/* A different way of shifting */
 				result+=b*Math.pow(2, i);
 			}
 		}catch(Exception e){
