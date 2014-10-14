@@ -38,7 +38,8 @@ public class Compressor {
 	
 	/**
 	 * Compress a file
-	 * @param f
+	 * @param f : The file to compress
+	 * @return : Some information about the compression
 	 */
 	public String Compress(File f){
 		String info;
@@ -93,7 +94,7 @@ public class Compressor {
 	/**
 	 * Build the final huffman tree by inserting leaf huffman trees into a priority queue
 	 * and then build our way up by combining these trees until we have one master tree
-	 * @param charFreqs
+	 * @param charFreqs : The frequencies of each character in the original file
 	 * @return the master tree
 	 */
 	private HuffmanTree<Character> buildTree(int[] charFreqs){
@@ -119,9 +120,9 @@ public class Compressor {
 	
 	
 	/**
-	 * Build a hashmap of the <symbol, huffman code> pairs.
-	 * @param huffTree
-	 * @return codeMap
+	 * Recursively build a hashmap of the <symbol, huffman code> pairs.
+	 * @param huffTree : the huffman tree of characters and frequencies
+	 * @return codeMap : Key,value pairs of the symbol and codes
 	 */
 	private HashMap<Character, String> buildMap(HashMap<Character,String> codeMap, HuffmanTree<Character> huffTree, StringBuilder code){
 		if (huffTree.symbol != null){
@@ -145,8 +146,8 @@ public class Compressor {
 	/**
 	 * Write out the header piece of the compressed file that 
 	 * allows us to decode the file once it is read back in
-	 * @param output
-	 * @param huffTree
+	 * @param output : Writer for compressed file
+	 * @param huffTree : The Huffman tree constructed from buildTree(..)
 	 */
 	private void writeHeader(BinaryWriter output, HuffmanTree<Character> huffTree){
 		if(huffTree.symbol == null){
@@ -162,17 +163,19 @@ public class Compressor {
 	
 	/**
 	 * Writes the compressed file in binary form.
-	 * @param codeMap
+	 * @param huffTree : The huffmanTree from buildTree
+	 * @param codeMap : The key,value pairs of the symbols and their codes 
+	 * @param textLength : How long the text was
+	 * @param outfile : The output file
+	 * @param infile : The input file
 	 */
 	private void writeFile(HuffmanTree<Character> huffTree, HashMap<Character,String> codeMap, int textLength, File outfile, File infile){
-		// TODO: Write file writer to write out a binary file & a header file.  Need to implement BinaryWriter before this can be done though.
-		// First write out a header so we can decode later
 		Integer eof = 0;
 		try{
 			FileWriter decode = new FileWriter(outfile);
 			BinaryWriter output = new BinaryWriter ( new FileOutputStream(outfile, true) );
 			
-			// Write out the header
+			// Write out the header (see above method)
 			writeHeader(output, huffTree);
 			output.writeByte(Integer.toBinaryString(textLength));
 			output.write(1); // Add a signal for the end of the header
@@ -201,7 +204,7 @@ public class Compressor {
 	
 	/**
 	 * Returns a string with some information about the compression that has been done.
-	 * @return
+	 * @return some information about the encoding
 	 */
 	public String printInfo(File infile, File outfile, HashMap<Character,String> codeMap){
 		StringBuilder info = new StringBuilder();

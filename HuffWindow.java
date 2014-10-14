@@ -120,7 +120,7 @@ public class HuffWindow {
 		}
 		public void actionPerformed(ActionEvent e) {
 			JFileChooser chooser = new JFileChooser();
-		    FileNameExtensionFilter filter = new FileNameExtensionFilter("Text & Huffman Compressed Files", "txt", "huff", "comp");
+		    FileNameExtensionFilter filter = new FileNameExtensionFilter("Text & Huffman Compressed Files (.txt, .huff)", "txt", "huff", "comp");
 		    chooser.setFileFilter(filter);
 		    int returnVal = chooser.showOpenDialog(frmCompressure);
 		    if(returnVal == JFileChooser.APPROVE_OPTION) {
@@ -133,26 +133,28 @@ public class HuffWindow {
 		    		btnCompress.setEnabled(true);
 		    		btnCompress.setAction(compressAction);
 		    		huffCompress = new Compressor();
-		    	} else if ( fileName.endsWith("huff") || fileName.endsWith("comp") ){
+		    	} else if ( fileName.endsWith("huff") ){
 		    		btnCompress.setText("Deompress");
 		    		btnCompress.setEnabled(true);
 		    		btnCompress.setAction(decompressAction);
 		    		huffDecompress = new Decompressor();
-		    	}
-		    	
+		    	}	
 		    }
 		}
 	}
 
 	/**
-	 * 
-	 *
+	 * Specifies the actions to be taken when compressing files
+	 * and sets up the UI to give users feedback
 	 */
 	private class CompressAction extends AbstractAction {
+		/* Constructor simply sets up the UI */
 		public CompressAction() {
 			putValue(NAME, "Compress");
 			putValue(SHORT_DESCRIPTION, "Write .huff and .comp files");
 		}
+		
+		/* Adds the compression action to the button */
 		public void actionPerformed(ActionEvent e) {
 			String info = huffCompress.Compress(chosenFile);
 			txtpnWelcomeToCompressure.setText(info);
@@ -160,14 +162,17 @@ public class HuffWindow {
 	}
 	
 	/**
-	 * 
-	 *
+	 * Specifies the actions to be taken when decompressing files
+	 * and sets up the UI to give users feedback
 	 */
 	private class DecompressAction extends AbstractAction {
+		/* Constructor simply sets up the UI */
 		public DecompressAction() {
 			putValue(NAME, "Decompress");
 			putValue(SHORT_DESCRIPTION, "Write a .txt file from .huff and .comp files.");
 		}
+		
+		/* Adds the decompression action to the button */
 		public void actionPerformed(ActionEvent e) {
 			String info = huffDecompress.Decompress(chosenFile);
 			txtpnWelcomeToCompressure.setText(info);

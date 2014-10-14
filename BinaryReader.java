@@ -62,7 +62,7 @@ public class BinaryReader {
 				if(b == -1){
 					break;
 				}
-				/* A different way of shifting */
+				/* A different way of shifting, though slower I'm leaving for the fun */
 				result+=b*Math.pow(2, i);
 			}
 		}catch(Exception e){

@@ -23,8 +23,8 @@ public class HuffmanTree<Symbol> implements Comparable<HuffmanTree<Symbol>>{
 	
 	/**
 	 * Creates a leaf node with a given symbol and frequency
-	 * @param symbol
-	 * @param frequency
+	 * @param symbol : The symbol being compressed
+	 * @param frequency : The number of times it has occurred
 	 */
 	HuffmanTree(Symbol symbol, Integer frequency){
 		this.symbol = symbol;
@@ -35,8 +35,8 @@ public class HuffmanTree<Symbol> implements Comparable<HuffmanTree<Symbol>>{
 	
 	/**
 	 * Creates a non-leaf node with the frequency set to the sum of the children's frequencies
-	 * @param left
-	 * @param right
+	 * @param left : Left sub-tree
+	 * @param right : Right subtree
 	 */
 	HuffmanTree(HuffmanTree<Symbol> left, HuffmanTree<Symbol> right){
 		symbol = null;
@@ -47,6 +47,7 @@ public class HuffmanTree<Symbol> implements Comparable<HuffmanTree<Symbol>>{
 
 	/**
 	 * Returns the difference between the frequencies of two trees
+	 * @param tree : The tree whose root node we wish to compare
 	 */
 	public int compareTo(HuffmanTree<Symbol> tree ) {
 		return this.frequency - tree.frequency;

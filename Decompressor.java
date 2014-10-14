@@ -27,7 +27,8 @@ public class Decompressor {
 	
 	/**
 	 * Decompress a file
-	 * @param f
+	 * @param f : The file to decompress
+	 * @return : Some info about where the decompressed file is
 	 */
 	public String Decompress(File f){
 		String info = "Error decompressing your file.  I must stop, sorry...";
@@ -41,7 +42,7 @@ public class Decompressor {
 			HashMap<String,Character> codeMap = buildMap(new HashMap<String,Character>(), huffTree, new StringBuilder());
 			int textLength = bitreader.readByte();
 			bitreader.readByte(); bitreader.read();
-			String decoded = decode(bitreader, codeMap, textLength, new StringBuilder());
+			String decoded = decode(bitreader, codeMap, textLength);
 			writeFile(outfile, decoded);
 			info = "Your file has been written to " + outFileName + ".";
 		}catch(Exception e){
@@ -53,8 +54,8 @@ public class Decompressor {
 	
 	/**
 	 * Build the huffman tree from the header portion of the compressed file
-	 * @param bitreader
-	 * @return
+	 * @param bitreader : Reader of the compressed file
+	 * @return The reconstructed huffman tree
 	 */
 	private HuffmanTree<Character> buildTree(BinaryReader bitreader){
 		try{
@@ -86,11 +87,11 @@ public class Decompressor {
 	
 	
 	/**
-	 * Build the map of characters and codes from the huffman tree
-	 * @param codeMap
-	 * @param huffTree
-	 * @param code
-	 * @return
+	 * Recursively build the map of characters and codes from the huffman tree
+	 * @param codeMap: The key,value pairs for the codes and symbols (to be constructed)
+	 * @param huffTree : A reconstruction of the huffmantree from the encoding
+	 * @param code : Stringbuilder that reads in the code portion of the encoding
+	 * @return The completed key,value pairs for the codes and symbols from the encoding
 	 */
 	private HashMap<String,Character> buildMap(HashMap<String,Character> codeMap, HuffmanTree<Character> huffTree, StringBuilder code){
 		if (huffTree.symbol != null){
@@ -114,15 +115,16 @@ public class Decompressor {
 	
 	/**
 	 * Go through the data portion of the compresed file and use the codeMap to decode it 
-	 * @param bitreader
-	 * @param codeMap
-	 * @param stringBuilder
-	 * @return
+	 * @param bitreader : The reader for the compressed file
+	 * @param codeMap : A key,value pair for the codes and symbols of the compressed file
+	 * @return The decoded string
 	 */
-	private String decode(BinaryReader bitreader,HashMap<String, Character> codeMap, int textLength, StringBuilder decoded) {
+	private String decode(BinaryReader bitreader,HashMap<String, Character> codeMap, int textLength) {
 		StringBuilder code = new StringBuilder();
+		StringBuilder decoded = new StringBuilder();
 		int charsLeft = textLength;
 		int bit = bitreader.read();
+		// A do.. while just for the fun of it.
 		do{
 			code.append(bit);
 			if (codeMap.containsKey(code.toString())){
@@ -132,14 +134,14 @@ public class Decompressor {
 			}
 			bit = bitreader.read();
 		}while(bit!=-1 && charsLeft != 0);
-		// TODO Auto-generated method stub
+
 		return decoded.toString();
 	}
 	
 	/**
 	 * Write out the decoded file
-	 * @param outfile
-	 * @param decoded
+	 * @param outfile : The output file
+	 * @param decoded : The resultant string from decompression
 	 */
 	private void writeFile(File outfile, String decoded){
 		try{
@@ -154,7 +156,7 @@ public class Decompressor {
 	
 	/**
 	 * Returns a string with some information about the compression that has been done.
-	 * @return
+	 * @return : String containing information about the symbols and their frequencies.
 	 */
 	public String printInfo(HashMap<String,Character> codeMap){
 		StringBuilder info = new StringBuilder();
