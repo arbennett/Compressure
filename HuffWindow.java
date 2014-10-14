@@ -53,7 +53,7 @@ public class HuffWindow {
 	private void initialize() {
 		// Make the window & Start the layout
 		frmCompressure = new JFrame();
-		frmCompressure.setTitle("Compressure\n");
+		frmCompressure.setTitle("Compressure");
 		frmCompressure.setBounds(100, 100, 450, 300);
 		frmCompressure.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
