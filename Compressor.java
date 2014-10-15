@@ -177,7 +177,6 @@ public class Compressor {
 			
 			// Write out the header (see above method)
 			writeHeader(output, huffTree);
-			output.writeByte(Integer.toBinaryString(textLength));
 			output.write(1); // Add a signal for the end of the header
 			output.writeByte("0");
 			

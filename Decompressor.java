@@ -40,9 +40,8 @@ public class Decompressor {
 			bitreader.readByte();
 			HuffmanTree<Character> huffTree = buildTree(bitreader);
 			HashMap<String,Character> codeMap = buildMap(new HashMap<String,Character>(), huffTree, new StringBuilder());
-			int textLength = bitreader.readByte();
 			bitreader.readByte(); bitreader.read();
-			String decoded = decode(bitreader, codeMap, textLength);
+			String decoded = decode(bitreader, codeMap);
 			writeFile(outfile, decoded);
 			info = "Your file has been written to " + outFileName + ".";
 		}catch(Exception e){
@@ -119,10 +118,10 @@ public class Decompressor {
 	 * @param codeMap : A key,value pair for the codes and symbols of the compressed file
 	 * @return The decoded string
 	 */
-	private String decode(BinaryReader bitreader,HashMap<String, Character> codeMap, int textLength) {
+	private String decode(BinaryReader bitreader,HashMap<String, Character> codeMap) {
 		StringBuilder code = new StringBuilder();
 		StringBuilder decoded = new StringBuilder();
-		int charsLeft = textLength;
+		//int charsLeft = textLength;
 		int bit = bitreader.read();
 		// A do.. while just for the fun of it.
 		do{
@@ -130,10 +129,10 @@ public class Decompressor {
 			if (codeMap.containsKey(code.toString())){
 				decoded.append(codeMap.get(code.toString()));
 				code.setLength(0);
-				charsLeft--;
+				//charsLeft--;
 			}
 			bit = bitreader.read();
-		}while(bit!=-1 && charsLeft != 0);
+		}while(bit!=-1);
 
 		return decoded.toString();
 	}
